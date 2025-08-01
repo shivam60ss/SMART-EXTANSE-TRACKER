@@ -7,14 +7,16 @@ const AddExpenseForm = () => {
   const [title, setTitle] = useState("");
   const [amount, setAmount] = useState("");
   const [category, setCategory] = useState("Food");
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10)); // yyyy-mm-dd
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!title || !amount) return;
-    addExpense({ title, amount: Number(amount), category });
+    if (!title || !amount || !date) return;
+    addExpense({ title, amount: Number(amount), category, date });
     setTitle("");
     setAmount("");
     setCategory("Food");
+    setDate(new Date().toISOString().slice(0, 10));
   };
 
   return (
@@ -46,6 +48,12 @@ const AddExpenseForm = () => {
           <option>Rent</option>
           <option>Other</option>
         </select>
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="input input-bordered w-full"
+        />
         <button type="submit" className="btn btn-primary w-full">
           Add Expense
         </button>

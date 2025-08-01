@@ -4,32 +4,64 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearSca
 
 ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
 
+import { useMemo } from "react";
+
 export default function Dashboard() {
     const { expenses, budget } = useExpenseStore();
 
     const totalSpent = expenses.reduce((acc, e) => acc + e.amount, 0);
     const remainingBudget = budget - totalSpent;
 
+    // Aggregate expenses by category dynamically
+    const categoryData = useMemo(() => {
+        const categories = {};
+        expenses.forEach(({ category, amount }) => {
+            categories[category] = (categories[category] || 0) + amount;
+        });
+        return categories;
+    }, [expenses]);
+
     const pieData = {
-        labels: ["Food", "Travel", "Bills", "Rent", "Other"],
+        labels: Object.keys(categoryData),
         datasets: [
             {
-                data: [300, 150, 100, 200, 50],
+                data: Object.values(categoryData),
                 backgroundColor: ["#3B82F6", "#22D3EE", "#FBBF24", "#F43F5E", "#10B981"],
             },
         ],
     };
 
-    const barData = {
-        labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
-        datasets: [
-            {
-                label: "Expenses",
-                data: [400, 500, 300, 700],
-                backgroundColor: "#3B82F6",
-            },
-        ],
-    };
+    const barData = useMemo(() => {
+        // Helper to get week number of the month
+        const getWeekNumber = (date) => {
+            const d = new Date(date);
+            const day = d.getDay() || 7; // Sunday as 7
+            d.setDate(d.getDate() + 4 - day);
+            const yearStart = new Date(d.getFullYear(), 0, 1);
+            const weekNo = Math.ceil(((d - yearStart) / 86400000 + 1) / 7);
+            return weekNo;
+        };
+
+        const weeks = {};
+        expenses.forEach(({ date, amount }) => {
+            const week = getWeekNumber(date);
+            weeks[week] = (weeks[week] || 0) + amount;
+        });
+
+        const labels = Object.keys(weeks).map((w) => `Week ${w}`);
+        const data = Object.values(weeks);
+
+        return {
+            labels,
+            datasets: [
+                {
+                    label: "Expenses",
+                    data,
+                    backgroundColor: "#3B82F6",
+                },
+            ],
+        };
+    }, [expenses]);
 
     return (
         <div className="space-y-6">
