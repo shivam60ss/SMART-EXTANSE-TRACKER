@@ -12,7 +12,6 @@ export default function Dashboard() {
     const totalSpent = expenses.reduce((acc, e) => acc + e.amount, 0);
     const remainingBudget = budget - totalSpent;
 
-    // Aggregate expenses by category dynamically
     const categoryData = useMemo(() => {
         const categories = {};
         expenses.forEach(({ category, amount }) => {
@@ -83,11 +82,11 @@ export default function Dashboard() {
 
             {/* Charts */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="card bg-base-200 p-4 shadow-lg">
+                <div className="card bg-base-300 p-4 shadow-lg">
                     <h3 className="text-lg font-semibold mb-2">Category Breakdown</h3>
                     <Pie data={pieData} />
                 </div>
-                <div className="card bg-base-200 p-4 shadow-lg">
+                <div className="card bg-base-300 p-4 shadow-lg">
                     <h3 className="text-lg font-semibold mb-2">Weekly Trends</h3>
                     <Bar data={barData} />
                 </div>
