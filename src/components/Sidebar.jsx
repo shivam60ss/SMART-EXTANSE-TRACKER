@@ -17,7 +17,7 @@ const Sidebar = () => {
   ];
 
   return (
-    <div className="w-64 bg-secondary text-white flex flex-col">
+    <div className="w-64 bg-[#347B98] text-white flex flex-col">
       <h1 className="text-2xl font-bold text-center py-5">Expense Tracker</h1>
       <ul className="menu p-2">
         {menuItems.map((item) => (
